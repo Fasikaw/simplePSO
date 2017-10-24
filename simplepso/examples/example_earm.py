@@ -4,6 +4,7 @@ Created on Mon Mar 31 16:25:43 2014
 
 @author: james
 """
+
 import numpy as np
 import scipy.interpolate
 
@@ -20,7 +21,7 @@ except ImportError:
 import os
 from pysb.integrate import Solver
 from earm.lopez_embedded import model
-from simplepso.pso import PSO
+
 
 obs_names = ['mBid', 'cPARP']
 data_names = ['norm_ICRP', 'norm_ECRP']
@@ -29,7 +30,7 @@ var_names = ['nrm_var_ICRP', 'nrm_var_ECRP']
 obs_totals = [model.parameters['Bid_0'].value,
               model.parameters['PARP_0'].value]
 directory = os.path.dirname(__file__)
-data_path = os.path.join(directory, 'data',
+data_path = os.path.join(directory, '..','data',
                          'EC-RP_IMS-RP_IC-RP_data_for_models.csv')
 exp_data = np.genfromtxt(data_path, delimiter=',', names=True)
 
@@ -55,6 +56,7 @@ xnominal = np.log10(nominal_values[rate_mask])
 bounds_radius = 2
 solver = Solver(model, tspan, integrator='vode', rtol=1e-6, atol=1e-6, )
 
+
 def display(position):
 
     exp_obs_norm = exp_data[data_names].view(float).reshape(len(exp_data), -1).T
@@ -72,8 +74,8 @@ def display(position):
         plt.plot(exp_data['Time'], exp, color=c, marker='.', linestyle=':')
         plt.errorbar(exp_data['Time'], exp, yerr=exp_err, ecolor=c,
                      elinewidth=0.5, capsize=0)
-        plt.plot(solver.tspan, sim, color=c)
-    plt.plot(solver.tspan, sim_obs_norm[2], color='g')
+        plt.plot(tspan, sim, color=c)
+    plt.plot(tspan, sim_obs_norm[2], color='g')
     plt.vlines(momp_data[0], -0.05, 1.05, color='g', linestyle=':')
     plt.savefig('earm_trained.png')
     plt.show()
@@ -116,18 +118,21 @@ def likelihood(position):
     e3 = np.sum((momp_data - momp_sim) ** 2 / (2 * momp_var)) / 3
     error = e1 + e2 + e3
 
-    return error,
-
-
-def run_example():
-    pso = PSO(save_sampled=False, verbose=True, num_proc=4)
-    pso.set_cost_function(likelihood)
-    pso.set_start_position(xnominal)
-    pso.set_bounds(2)
-    pso.set_speed(-.25, .25)
-    pso.run(20, 100)
-    display(pso.best)
+    return error
 
 
 if __name__ == '__main__':
-    run_example()
+    from simplepso.pso import PSO
+    import multiprocessing as mp
+    # pool = mp.Pool(4)
+    pso = PSO(cost_function=likelihood, save_sampled=False, verbose=True,
+              start=xnominal)
+
+    # pso.set_pool(pool)
+    # pso.set_pool(None)
+
+    pso.set_bounds(2)
+    pso.set_speed(-.25, .25)
+    pso.setup_pso()
+    pso.run(20, 100)
+    display(pso.best)

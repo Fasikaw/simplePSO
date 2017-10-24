@@ -1,11 +1,36 @@
 # -*- coding: utf-8 -*-
 
-import pathos.multiprocessing as multiprocessing
+import pathos.multiprocessing as mp
 import numpy as np
-from deap import base, creator, tools
+from deap import base,  tools
 
 
-class PSO:
+class Particle(np.ndarray):
+    def __new__(cls, position):
+
+        obj = np.asarray(position).view(cls)
+        obj.speed = list()
+        obj.smin = list()
+        obj.smax = list()
+        obj.fitness = np.inf  # Min()
+        # obj.fitness.values = None
+        obj.best = None
+
+        return obj
+
+    def __array_finalize__(self, obj):
+        if obj is None:
+            return
+        self.info = getattr(obj, 'info', None)
+
+
+class Min(base.Fitness):
+    weights = (-1,)
+
+
+
+
+class PSO(object):
     """ Simple interface to run particle swarm optimization
 
         This class provides a simple interface to run particle swarm optimization.
@@ -49,7 +74,6 @@ class PSO:
             self.start = None
             self.size = None
         self.verbose = verbose
-        self.method = 'single_min'
         self.num_proc = num_proc
         self.best = None
         self.max_speed = None
@@ -60,7 +84,10 @@ class PSO:
         self.range = 2
         self.population = []
         self.toolbox = base.Toolbox()
-        self.stats = tools.Statistics(lambda ind: ind.fitness.values)
+        # self.toolbox.register("map", map)
+        self._use_multi_proc = False
+
+        self.stats = tools.Statistics(lambda ind: ind.fitness)
         self.logbook = tools.Logbook()
         self.all_history = None
         self.all_fitness = None
@@ -74,13 +101,22 @@ class PSO:
             fi = 2.05 + 2.05
             self.w = 2.0 / np.abs(2.0 - fi - np.sqrt(np.power(fi, 2) - 4 * fi))
 
+    def set_pool(self, pool):
+
+        self._use_multi_proc = True
+        # pool = mp.Pool()
+        self.toolbox.register("map", pool.map)
+        self.toolbox.register("join", pool.join)
+        self.toolbox.register("close", pool.close)
+        self.toolbox.register("terminate", pool.terminate)
+
     def _generate(self):
         """ Creates Particles and sets their speed
 
         :return:
         """
         start_position = np.random.uniform(self.lb, self.ub, self.size)
-        part = creator.Particle(start_position)
+        part = Particle(start_position)
         part.speed = np.random.uniform(self.min_speed, self.max_speed,
                                        self.size)
         part.smin = self.min_speed
@@ -153,13 +189,8 @@ class PSO:
 
         assert self.cost_function is not None, "Error: Must set a cost function. Use PSO.set_cost_function()."
 
-        if self.method == 'single_min':
-            creator.create("FitnessMin", base.Fitness, weights=(-1.00,))
-        creator.create("Particle", np.ndarray, fitness=creator.FitnessMin,
-                       speed=list, smin=list, smax=list, best=None)
-        self.toolbox.register("particle", self._generate)
         self.toolbox.register("population", tools.initRepeat, list,
-                              self.toolbox.particle)
+                              self._generate)
         self.toolbox.register("update", self._update_particle_position,
                               phi1=2.05, phi2=2.05)
         self.toolbox.register("evaluate", self.cost_function)
@@ -170,12 +201,7 @@ class PSO:
         self.stats.register("max", np.max, axis=0)
 
         self.logbook.header = ["iteration", "best"] + self.stats.fields
-        pool = multiprocessing.Pool(self.num_proc)
 
-        self.toolbox.register("map", pool.map)
-        self.toolbox.register("join", pool.join)
-        self.toolbox.register("close", pool.close)
-        self.toolbox.register("terminate", pool.terminate)
         self._is_setup = True
 
     def update_connected(self):
@@ -184,12 +210,24 @@ class PSO:
         :return:
         """
         for part in self.population:
-            if part.best is None or part.best.fitness < part.fitness:
-                part.best = creator.Particle(part)
-                part.best.fitness.values = part.fitness.values
-            if self.best is None or self.best.fitness < part.fitness:
-                self.best = creator.Particle(part)
-                self.best.fitness.values = part.fitness.values
+            # if part.best is None or part.best.fitness > part.fitness:
+            if part.fitness < part.best.fitness  :
+                # if part.best is not None:
+                #     print(part.best.fitness, part.fitness,
+                #           part.best.fitness > part.fitness)
+                part.best = Particle(part)
+                part.best.fitness = part.fitness
+                #part.best.fitness.values = part.fitness.values
+            # if self.best is None or self.best.fitness > part.fitness:
+            if part.fitness < self.best.fitness:
+                # if self.best is not None:
+                #     print(self.best.fitness, part.fitness,
+                #           self.best.fitness > part.fitness)
+                self.best = Particle(part)
+                # self.best.fitness.values = part.fitness.values
+                self.best.fitness = part.fitness
+
+
 
     def return_ranked_populations(self):
         """ Returns population of particles
@@ -269,13 +307,12 @@ class PSO:
         :param num_iterations:
         :return:
         """
-        if self._is_setup:
-            pass
-        else:
+        if not self._is_setup:
             self.setup_pso()
-        assert type(self.cost_function(
-                self.start)) == tuple, "Cost function must return a tuple. An error " \
-                                       "is occuring when running your starting position"
+
+        # assert type(self.cost_function(
+        #         self.start)) == tuple, "Cost function must return a tuple. An error " \
+        #                                "is occuring when running your starting position"
 
         history = np.zeros((num_iterations, len(self.start)))
         if self.save_sampled or save_samples:
@@ -284,29 +321,37 @@ class PSO:
             self.all_fitness = np.zeros((num_iterations, num_particles))
         values = np.zeros(num_iterations)
         self.population = self.toolbox.population(num_particles)
+        self.best = Particle(self.start)
+        self.best.fitness = self.cost_function(self.start)
+        for part in self.population:
+            part.best = Particle(part)
+            part.best.fitness = np.inf
         for g in range(1, num_iterations + 1):
             if self.update_w:
                 self.w = (num_iterations - g + 1.) / num_iterations
-            population_fitness = self.toolbox.map(self.toolbox.evaluate,
+            population_fitness = self.toolbox.map(self.cost_function,
                                                   self.population)
             for ind, fit in zip(self.population, population_fitness):
-                ind.fitness.values = fit
+                ind.fitness = fit
+                # ind.fitness#.values = fit
             self.update_connected()
             for part in self.population:
                 self.toolbox.update(part)
-            values[g - 1] = self.best.fitness.values[0]
+            values[g - 1] = self.best.fitness#.values[0]
             history[g - 1] = self.best
             if self.save_sampled or save_samples:
                 curr_fit, curr_pop = self.return_ranked_populations()
                 self.all_history[g - 1, :, :] = curr_pop
                 self.all_fitness[g - 1, :] = curr_fit
-            self.logbook.record(iteration=g, best=self.best.fitness.values[0],
+            self.logbook.record(iteration=g, best=self.best.fitness, #.values[0],
                                 **self.stats.compile(self.population))
-            if self.logbook.select('std')[-1] < 1e-12:
-                break
             if self.verbose:
                 print(self.logbook.stream)
-        self.toolbox.close()
-        self.toolbox.terminate()
+            if self.logbook.select('std')[-1] < 1e-12:
+                break
+
+        if self._use_multi_proc:
+            self.toolbox.close()
+            self.toolbox.terminate()
         self.values = values[:g]
         self.history = history[:g, :]
