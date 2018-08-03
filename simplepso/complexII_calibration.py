@@ -19,7 +19,7 @@ from pysb.integrate import *
 from pso import PSO
 import collections
 
-new_start =  np.load('optimizer_best_5000_all_new_2.npy')
+# new_start =  np.load('optimizer_best_5000_all_new_2.npy')
 
 model.enable_synth_deg()
 obs_names = ['MLKLa_obs']
