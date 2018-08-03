@@ -237,22 +237,22 @@ for tnf_title, dose in TNF_LOOP:
     ode_sim = ScipyOdeSimulator(model, tspan=tspan)
     ode_sim_res = ode_sim.run(initials={TNF(tnfr=None): dose})
 
-    #PLOT STOCHASTIC SIMULATION ALGORITHM (SSA) WITH AVG SSA (YELLOW) AND ODE (BLACK)
-    # Array: [(Observable name, number to start y axis at, number to end y axis at)]
-    obs_y_range = [('obsComplexI', 0, 75), ('obsComplexIIa', 0, 75), ('obsComplexIIb', 0, 75), ('obsMLKLp', 0, 11000), ('obstBID', 0, 11000)]
-
-    for obs, y1, y2 in obs_y_range:
-        plt.figure()
-        plt.ylim(y1, y2)
-        for _, run in df.groupby('simulation'):
-                plt.plot(tspan / 60, run.loc[:, obs])
-        plt.plot(tspan / 60, avg.loc[:, obs], 'gold', linewidth=3)
-        plt.plot(tspan / 60, ode_sim_res.observables[obs], 'black', linewidth=3, linestyle='dashed')
-        plt.xlabel("Time (in hr)", fontsize=15)
-        plt.ylabel("Molecules/Cell", fontsize=15)
-        plt.title('%s Trajectories' % obs, fontsize=18)
-        ssa_name = path + 'run5_%d_SSA_%s.png' % (dose, obs)
-        plt.savefig(ssa_name, bbox_inches='tight')
+    # #PLOT STOCHASTIC SIMULATION ALGORITHM (SSA) WITH AVG SSA (YELLOW) AND ODE (BLACK)
+    # # Array: [(Observable name, number to start y axis at, number to end y axis at)]
+    # obs_y_range = [('obsComplexI', 0, 75), ('obsComplexIIa', 0, 75), ('obsComplexIIb', 0, 75), ('obsMLKLp', 0, 11000), ('obstBID', 0, 11000)]
+    #
+    # for obs, y1, y2 in obs_y_range:
+    #     plt.figure()
+    #     plt.ylim(y1, y2)
+    #     for _, run in df.groupby('simulation'):
+    #             plt.plot(tspan / 60, run.loc[:, obs])
+    #     plt.plot(tspan / 60, avg.loc[:, obs], 'gold', linewidth=3)
+    #     plt.plot(tspan / 60, ode_sim_res.observables[obs], 'black', linewidth=3, linestyle='dashed')
+    #     plt.xlabel("Time (in hr)", fontsize=15)
+    #     plt.ylabel("Molecules/Cell", fontsize=15)
+    #     plt.title('%s Trajectories' % obs, fontsize=18)
+    #     ssa_name = path + 'run5_%d_SSA_%s.png' % (dose, obs)
+    #     plt.savefig(ssa_name, bbox_inches='tight')
 
 
     # #AT HIGH VARIABILITY AND END TIMEPOINTS FOR EACH OBSERVABLE: PLOT ALL SSA RUNS OF THAT TIME POINT WITH A DENSITY PLOT

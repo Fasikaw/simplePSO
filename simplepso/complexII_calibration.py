@@ -22,8 +22,8 @@ import collections
 # new_start =  np.load('optimizer_best_5000_all_new_2.npy')
 
 model.enable_synth_deg()
-obs_names = ['MLKLa_obs']
-mlkl_obs = 'MLKLa_obs'
+obs_names = ['obsMLKLp']
+mlkl_obs = 'obsMLKLp'
 
 
 # Defining a few helper functions to use
@@ -133,11 +133,11 @@ def display(parameter_2):
 
     result = solver1.run(param_values=ko_pars)
 
-    ysim_array11 = result.observables[0]['MLKLa_obs']
-    ysim_array22 = result.observables[1]['MLKLa_obs']
-    ysim_array33 = result.observables[2]['MLKLa_obs']
-    ysim_array44 = result.observables[3]['MLKLa_obs']
-    ysim_array55 = result.observables[4]['MLKLa_obs']
+    ysim_array11 = result.observables[0]['obsMLKLp']
+    ysim_array22 = result.observables[1]['obsMLKLp']
+    ysim_array33 = result.observables[2]['obsMLKLp']
+    ysim_array44 = result.observables[3]['obsMLKLp']
+    ysim_array55 = result.observables[4]['obsMLKLp']
 
     # ysim_array = extract_records(solver.yobs, obs_names)
     ysim_norm11 = normalize(ysim_array11)
@@ -161,12 +161,12 @@ def display(parameter_2):
 
 
     # solver1.run(param_values)
-    # ysim_array_2 = solver.yobs['MLKLa_obs']
+    # ysim_array_2 = solver.yobs['obsMLKLp']
     # ysim_norm_2 = normalize(ysim_array_2)
     # ['red', 'green', 'black', 'purple', 'orange']
     # param_values[rate_mask] = 10 ** log10_original_values
     # solver.run(param_values)
-    # ysim_array_3 = solver.yobs['MLKLa_obs']
+    # ysim_array_3 = solver.yobs['obsMLKLp']
     # ysim_norm_3 = normalize(ysim_array_3)
 
     # colors = [cmap(i) for i in np.linspace(0, 1, 5)]
@@ -192,7 +192,7 @@ def display(parameter_2):
         plt.ylabel('molecules/cell')
         plt.xlabel('time (hrs)')
         plt.tight_layout()
-        plt.savefig('necroptosis_kds_all_75_5000_start2l.png', format='png')
+        plt.savefig('complexIIv4.png', format='png')
     plt.show()
     plt.close()
 
@@ -227,11 +227,11 @@ def obj_function(params):
 
     # list = [y1, y2, y3, y4, y5]
     # for i in list:
-    ysim_array1 = result.observables[0]['MLKLa_obs']
-    ysim_array2 = result.observables[1]['MLKLa_obs']
-    ysim_array3 = result.observables[2]['MLKLa_obs']
-    ysim_array4 = result.observables[3]['MLKLa_obs']
-    ysim_array5 = result.observables[4]['MLKLa_obs']
+    ysim_array1 = result.observables[0]['obsMLKLp']
+    ysim_array2 = result.observables[1]['obsMLKLp']
+    ysim_array3 = result.observables[2]['obsMLKLp']
+    ysim_array4 = result.observables[3]['obsMLKLp']
+    ysim_array5 = result.observables[4]['obsMLKLp']
 
     # ysim_array = extract_records(solver.yobs, obs_names)
     ysim_norm1 = normalize(ysim_array1)
