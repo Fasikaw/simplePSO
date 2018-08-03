@@ -216,7 +216,7 @@ tspan = np.linspace(0, 2160, 2161)
 plt.ioff()
 
 #Set Path to save figures
-path = '/home/asasla/main/ComplexII/'
+path = '/home/asasla/main/ParticleSwarmOptimization/simplepso/data/'
 # path = '/Users/ariella/PycharmProjects/ComplexII/'
 
 #RUN THROUGH EACH AMOUNT OF TNF: HOW DOES THAT AFFECT SSA VS ODE
