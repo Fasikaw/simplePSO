@@ -10,12 +10,13 @@ except ImportError:
     pass
 
 import numpy as np
-from complexIIv4 import model
+from complexIIv4_pso import model
 # from pysb.integrate import Solver
 import scipy.interpolate
 from pysb.integrate import *
 
-from simplepso.pso import PSO
+# from simplepso.pso import PSO
+from pso import PSO
 import collections
 
 new_start =  np.load('optimizer_best_5000_all_new_2.npy')
@@ -288,7 +289,7 @@ def run_example():
     pso.set_start_position(log10_original_values)
     pso.set_bounds(parameter_range=2)
     pso.set_speed(-.25, .25)
-    pso.run(50, 500)
+    pso.run(25, 5)
     fitness,positions = pso.return_ranked_populations()  # at end of PSO for all # particles, rank by cost function value
     hist_all = pso.all_history
     fit_all = pso.all_fitness

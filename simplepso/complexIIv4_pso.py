@@ -11,7 +11,7 @@ from pysb import *
 #import random
 
 # Definitions
-NUM_SSA_RUNS = 10000 #How many times SSA will be ran
+NUM_SSA_RUNS = 10 #How many times SSA will be ran
 
 # instantiate a model
 Model()
@@ -216,8 +216,8 @@ tspan = np.linspace(0, 2160, 2161)
 plt.ioff()
 
 #Set Path to save figures
-path = '/home/asasla/main/ComplexII/'
-# path = '/Users/ariella/PycharmProjects/ComplexII/'
+# path = '/home/asasla/main/ComplexII/'
+path = '/Users/ariella/PycharmProjects/ComplexII/'
 
 #RUN THROUGH EACH AMOUNT OF TNF: HOW DOES THAT AFFECT SSA VS ODE
 TNF_LOOP = [('100 ng/ml TNF', 2326), ('10 ng/ml TNF', 232), ('1 ng/ml TNF', 23), ('.1 ng/ml TNF', 2)]
