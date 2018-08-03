@@ -289,7 +289,7 @@ def run_example():
     pso.set_start_position(log10_original_values)
     pso.set_bounds(parameter_range=2)
     pso.set_speed(-.25, .25)
-    pso.run(25, 5)
+    pso.run(50, 500)
     fitness,positions = pso.return_ranked_populations()  # at end of PSO for all # particles, rank by cost function value
     hist_all = pso.all_history
     fit_all = pso.all_fitness
