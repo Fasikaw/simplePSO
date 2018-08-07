@@ -625,9 +625,9 @@ for key in keys:
                         #ster.append((tot/grps[n])**0.5)                            #for standard deviation
                     loops += 1
 
-                # NORMALIZE AVG_LIST HERE
-                for i in range(len(avg_list)):
-                    avg_list[i] = normalize(avg_list[i],key)
+                # # NORMALIZE AVG_LIST HERE
+                # for i in range(len(avg_list)):
+                #     avg_list[i] = normalize(avg_list[i],key)
 
                 erlow=[]
                 for i in range(len(ster)):
@@ -642,14 +642,16 @@ for key in keys:
                 ax.plot(datalist[0]['time'],avg_list,color=cols[n],linestyle='-',marker='',label=grpnames[n],linewidth=1.5)
                 #ax.plot(datalist[0]['time'],avg_list,color=c,linestyle='-',marker='',label=grpnames[n],linewidth=1)
                 index += grps[n]
-                ax.fill_between(datalist[0]['time'],erlow,erhigh,facecolor=cols[n],alpha=0.5)
+                # ax.fill_between(datalist[0]['time'],erlow,erhigh,facecolor=cols[n],alpha=0.5)
 
         for obs in model.observables:
             # Crappy quick fix, but observables must be in same order in model as in data files
             if key == keys[int(obs.name.replace('O_',''))]:
-                ax.plot(tspan/60, ssa_avg.loc[:, obs.name]/norms[key], color='gold', label='SSA Avg',linewidth=2)
+                ax.plot(tspan / 60, ssa_avg.loc[:, obs.name], color='gold', label='SSA Avg', linewidth=2)
+                # ax.plot(tspan/60, ssa_avg.loc[:, obs.name]/norms[key], color='gold', label='SSA Avg',linewidth=2)
                 #ax.plot(tspan/60, ode_sim_res.observables[obs.name]/ariella_norms[key], color = 'black',linestyle=':',label='ODE',linewidth=1.5)
-                ax.plot(tspan/60, ode_sim_res.observables[obs.name]/norms[key], color = 'black',linestyle=':',label='ODE',linewidth=2)
+                # ax.plot(tspan/60, ode_sim_res.observables[obs.name]/norms[key], color = 'black',linestyle=':',label='ODE',linewidth=2)
+                ax.plot(tspan / 60, ode_sim_res.observables[obs.name], color='black', linestyle=':', label='ODE', linewidth=2)
                 break
         ax.set_xlabel('Time (hrs)')
         ax.set_ylabel('Total present')

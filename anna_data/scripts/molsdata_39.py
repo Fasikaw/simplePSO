@@ -642,7 +642,7 @@ for key in keys:
                 ax.plot(datalist[0]['time'],avg_list,color=cols[n],linestyle='-',marker='',label=grpnames[n],linewidth=1.5)
                 #ax.plot(datalist[0]['time'],avg_list,color=c,linestyle='-',marker='',label=grpnames[n],linewidth=1)
                 index += grps[n]
-                ax.fill_between(datalist[0]['time'],erlow,erhigh,facecolor=cols[n],alpha=0.5)
+                # ax.fill_between(datalist[0]['time'],erlow,erhigh,facecolor=cols[n],alpha=0.5)
 
         for obs in model.observables:
             # Crappy quick fix, but observables must be in same order in model as in data files
