@@ -466,7 +466,7 @@ Observable('O_29',BID(c8=None, mod='trunc'))
 
 
 #from complexIIv4_normalization import model
-NUM_SSA_RUNS = 10
+NUM_SSA_RUNS = 10000
 
 datafiles = []
 if sys.argv[1] == 'file':
@@ -597,7 +597,7 @@ for key in keys:
         '''
         if key in avgs:
             #grpnames = ['~100 ng/mL TNF','~10 ng/mL TNF','~0.1 ng/mL TNF']
-            grpnames = ['Membrane','No membrane']
+            grpnames = ['Smol, Membrane','Smol, No membrane']
             cols = ['tomato','cornflowerblue']
             #cols = ['navy', 'indigo', 'darkorange']
             grps = [60,42]
