@@ -309,10 +309,17 @@ def run_example():
     np.save('his_all_pso', hist_all)
     np.save('fit_all_pso', fit_all)
 
+def run_example():
+    pso = PSO(verbose=True, save_sampled=True)
+    pso.set_cost_function(obj_function)
+    pso.set_start_position(log10_original_values)
+    pso.set_bounds(parameter_range=2)
+    pso.set_speed(-.25, .25)
+    pso.run(num_particles=50, num_iterations=1000)
+	np.save('optimizer_best_5000_all_new',optimizer.best)
 
 if __name__ == '__main__':
     run_example()
-
 
 # def run_example():
 #     # print('run_example')
