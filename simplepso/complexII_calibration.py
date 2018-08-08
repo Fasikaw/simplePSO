@@ -283,31 +283,31 @@ def obj_function(params):
 #
 #     np.save('/home/ildefog/ParticleSwarmOptimization/simplepso/examples', best_pars)
 
-def run_example():
-    pso = PSO(verbose=True, save_sampled=True)
-    pso.set_cost_function(obj_function)
-    pso.set_start_position(log10_original_values)
-    pso.set_bounds(parameter_range=2)
-    pso.set_speed(-.25, .25)
-    pso.run(50, 500)
-    fitness,positions = pso.return_ranked_populations()  # at end of PSO for all # particles, rank by cost function value
-    hist_all = pso.all_history
-    fit_all = pso.all_fitness
-    # print('fitness, particles')
-    # print(fitness)
-    # print('position rank')
-    # print(positions)
-    # print('all history')
-    # print(hist_all)
-    # print('fit all iterations')
-    # print(fit_all)
-    if plot:
-        display(pso.best)
-    display(pso.best)
-    np.save('position_pso', positions) # param vectors for 1000 particles
-    np.save('values_cost_pso', fitness) #cost function for each iteration of 1000 particles
-    np.save('his_all_pso', hist_all)
-    np.save('fit_all_pso', fit_all)
+# def run_example():
+#     pso = PSO(verbose=True, save_sampled=True)
+#     pso.set_cost_function(obj_function)
+#     pso.set_start_position(log10_original_values)
+#     pso.set_bounds(parameter_range=2)
+#     pso.set_speed(-.25, .25)
+#     pso.run(50, 500)
+#     fitness,positions = pso.return_ranked_populations()  # at end of PSO for all # particles, rank by cost function value
+#     hist_all = pso.all_history
+#     fit_all = pso.all_fitness
+#     # print('fitness, particles')
+#     # print(fitness)
+#     # print('position rank')
+#     # print(positions)
+#     # print('all history')
+#     # print(hist_all)
+#     # print('fit all iterations')
+#     # print(fit_all)
+#     if plot:
+#         display(pso.best)
+#     display(pso.best)
+#     np.save('position_pso', positions) # param vectors for 1000 particles
+#     np.save('values_cost_pso', fitness) #cost function for each iteration of 1000 particles
+#     np.save('his_all_pso', hist_all)
+#     np.save('fit_all_pso', fit_all)
 
 def run_example():
     pso = PSO(verbose=True, save_sampled=True)
@@ -316,7 +316,7 @@ def run_example():
     pso.set_bounds(parameter_range=2)
     pso.set_speed(-.25, .25)
     pso.run(num_particles=50, num_iterations=1000)
-	np.save('optimizer_best_5000_all_new',optimizer.best)
+    np.save('optimizer_best_5000_all_new',optimizer.best)
 
 if __name__ == '__main__':
     run_example()
