@@ -316,7 +316,8 @@ def run_example():
     pso.set_bounds(parameter_range=2)
     pso.set_speed(-.25, .25)
     pso.run(num_particles=50, num_iterations=1000)
-    np.save('optimizer_best_5000_all_new',optimizer.best)
+    np.save('optimizer_best_5000_all_new', pso.best)
+    # np.save('optimizer_best_5000_all_new',optimizer.best)
 
 if __name__ == '__main__':
     run_example()
